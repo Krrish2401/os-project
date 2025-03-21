@@ -17,7 +17,7 @@ model User {
   rootDir     Directory? @relation("UserRootDir", fields: [rootDirId], references: [id])
   files       File[]
   directories Directory[] @relation("UserDirectories") // All directories owned by the user
-  xyz         String      @default("xyz")
+ 
 }
 
 model Directory {
