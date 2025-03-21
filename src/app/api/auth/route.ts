@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { token, name, phone, image } = body;
+    const { token, name, image } = body;
 
     // Validate required fields
     if (!token || !name || !image) {
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         image,
       });
       return NextResponse.json(
-        { error: "Missing required fields: token, name, phone, or image" },
+        { error: "Missing required fields: token, name, or image" },
         { status: 400 }
       );
     }
@@ -77,23 +77,75 @@ export async function POST(req: Request) {
     const { uid, email } = decodedToken;
     console.log("Extracted UID and email from decoded token:", { uid, email });
 
-    // Upsert user in the database
-    console.log("Upserting user in the database...");
+    // Handle user creation and root directory in a transaction
+    console.log("Creating/updating user and checking root directory...");
     let user;
     try {
-      user = await prisma.user.upsert({
-        where: { id: uid },
-        update: { name },
-        create: {
-          id: uid,
-          email: email ?? "unknown@example.com",
-          name,
-        },
+      // Use a transaction to ensure data consistency
+      user = await prisma.$transaction(async (tx) => {
+        // First check if the user already exists
+        const existingUser = await tx.user.findUnique({
+          where: { id: uid },
+          include: { rootDir: true },
+        });
+
+        if (existingUser) {
+          // User exists, just update the name
+          const updatedUser = await tx.user.update({
+            where: { id: uid },
+            data: { name },
+            include: { rootDir: true },
+          });
+
+          // If user doesn't have a root directory yet, create one
+          if (!updatedUser.rootDir) {
+            const rootDir = await tx.directory.create({
+              data: {
+                name: "Root Directory",
+                userId: uid,
+              },
+            });
+
+            // Update user with root directory reference
+            return await tx.user.update({
+              where: { id: uid },
+              data: { rootDirId: rootDir.id },
+              include: { rootDir: true },
+            });
+          }
+
+          return updatedUser;
+        } else {
+          // User does not exist, create user first
+          const newUser = await tx.user.create({
+            data: {
+              id: uid,
+              email: email ?? "unknown@example.com",
+              name,
+            },
+          });
+
+          // Then create the root directory
+          const rootDir = await tx.directory.create({
+            data: {
+              name: "Root Directory",
+              userId: uid,
+            },
+          });
+
+          // Update user with root directory reference
+          return await tx.user.update({
+            where: { id: uid },
+            data: { rootDirId: rootDir.id },
+            include: { rootDir: true },
+          });
+        }
       });
-      console.log("User upserted successfully:", user);
+
+      console.log("User and root directory handled successfully:", user);
     } catch (prismaError) {
       console.error(
-        "Prisma error during upsert:",
+        "Prisma error during transaction:",
         getErrorMessage(prismaError)
       );
       return NextResponse.json(

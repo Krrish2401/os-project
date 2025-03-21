@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id          String     @id 
+  id          String     @id @default(cuid())
   email       String     @unique
   name        String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  rootDirId   String?    @unique               // Make this unique for one-to-one relation
+  rootDirId   String?    @unique // Points to the root directory
   rootDir     Directory? @relation("UserRootDir", fields: [rootDirId], references: [id])
   files       File[]
-  directories Directory[] @relation("UserDirectories") // All directories owned by user
+  directories Directory[] @relation("UserDirectories") // All directories owned by the user
 }
 
 model Directory {
@@ -28,7 +28,7 @@ model Directory {
   parent      Directory? @relation("ParentDirectory", fields: [parentId], references: [id])
   subdirs     Directory[] @relation("ParentDirectory")
   files       File[]
-  rootFor     User?      @relation("UserRootDir") // User who has this as root directory
+  rootFor     User?      @relation("UserRootDir") // User who has this as their root directory
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -41,7 +41,7 @@ model File {
   directory   Directory  @relation(fields: [dirId], references: [id])
   name        String
   extension   String
-  firebaseUrl String
+  fileUrl     String   // URL of the file in Appwrite Storage
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-}
+} 
