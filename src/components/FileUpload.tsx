@@ -60,7 +60,7 @@ export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
   };
 
   return (
-    <div className="p-4 bg-gray-700 rounded-lg shadow-md">
+    <div className="p-4 bg-gray-700 rounded-lg mt-4 shadow-md">
       <h2 className="text-lg font-semibold mb-4">Upload File</h2>
 
       {/* File Input */}

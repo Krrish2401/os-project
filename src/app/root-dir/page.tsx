@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/useAuth";
 import DirectoryCard from "@/components/DirectoryCard";
+import CreateDirectory from "@/components/CreateDire";
 
 interface File {
   id: string;
@@ -19,6 +20,7 @@ interface Directory {
 
 export default function RootDirectoryPage() {
   const [files, setFiles] = useState<File[]>([]);
+  const [rootdirid, setrootdirid] = useState<string>("");
   const [directories, setDirectories] = useState<Directory[]>([]);
   const [isLoading, setLoading] = useState(true); // Loading state for data fetching
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +57,7 @@ export default function RootDirectoryPage() {
         const data = await response.json();
         setFiles(data.files);
         setDirectories(data.directories);
+        setrootdirid(data.rootdir);
       } catch (err) {
         setError("An error occurred while fetching the root directory");
       } finally {
@@ -137,7 +140,7 @@ export default function RootDirectoryPage() {
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline"
                 >
-                  {file.name}.{file.extension}
+                  {file.name}
                 </a>
               </li>
             ))}
@@ -160,6 +163,7 @@ export default function RootDirectoryPage() {
           <p className="text-gray-500">No directories found.</p>
         )}
       </section>
+      <CreateDirectory directoryId = {rootdirid} userId={userId} />
     </div>
   );
 }

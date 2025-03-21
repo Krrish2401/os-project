@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import DirectoryCard from "@/components/DirectoryCard";
 import { useAuth } from "@/lib/useAuth";
 import FileUpload from "@/components/FileUpload";
+import CreateDirectory from "@/components/CreateDire";
 
 interface File {
   id: string;
@@ -171,7 +172,8 @@ export default function DirectoryPage({
         ) : (
           <p className="text-gray-500">No files found.</p>
         )}
-        <FileUpload directoryId={id} userId ={userId} />
+        <FileUpload directoryId={id} userId={userId} />
+        <CreateDirectory directoryId={id} userId={userId} />
       </section>
     </div>
   );

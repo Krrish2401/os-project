@@ -32,6 +32,7 @@ export async function GET(request: Request) {
 
     // Return the root directory contents
     return NextResponse.json({
+      rootdir : user.rootDir.id,
       files: user.rootDir.files,
       directories: user.rootDir.subdirs,
     });
