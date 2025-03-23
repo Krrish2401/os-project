@@ -1,6 +1,7 @@
 // components/DirectoryCard.tsx
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 interface DirectoryCardProps {
@@ -9,8 +10,30 @@ interface DirectoryCardProps {
 }
 
 export default function DirectoryCard({ id, name }: DirectoryCardProps) {
+  const [isUpdating, setIsUpdating] = useState(false); // State to track update status
+
+  const updateAccessCount = async () => {
+    if (isUpdating) return; // Prevent multiple calls
+    setIsUpdating(true); // Disable further clicks
+    try {
+      await fetch("/api/updateDirectoryAccess", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ directoryId: id }),
+      });
+    } catch (error) {
+      console.error("Failed to update access count:", error);
+    } finally {
+      setIsUpdating(false); // Re-enable the link after the update
+    }
+  };
+
   return (
-    <Link href={`/directory/${id}`} className="block">
+    <Link
+      href={`/directory/${id}`}
+      className={`block ${isUpdating ? "pointer-events-none text-gray-400" : ""}`} // Disable link styling
+      onClick={updateAccessCount}
+    >
       <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
         <div className="flex items-center space-x-3">
           {/* Folder Icon */}
