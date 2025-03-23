@@ -32,6 +32,7 @@ model Directory {
   rootFor     User?      @relation("UserRootDir") // User who has this as their root directory
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  accessCount Int        @default(0)
 }
 
 model File {

@@ -9,7 +9,7 @@ const globalForPrisma = global as unknown as {
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: [  "error"], // Optional: Enable logging for debugging
+    log: ["query", "info", "warn", "error"], // Optional: Enable logging for debugging
   });
 
 // Prevent creating multiple instances of Prisma Client in development mode
