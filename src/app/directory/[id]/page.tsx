@@ -7,6 +7,7 @@ import DirectoryCard from "@/components/DirectoryCard";
 import { useAuth } from "@/lib/useAuth";
 import FileUpload from "@/components/FileUpload";
 import CreateDirectory from "@/components/CreateDire";
+import  DirectoryComponent  from "@/components/DirectoryComponent";
 
 interface File {
   id: string;
@@ -174,6 +175,7 @@ export default function DirectoryPage({
         )}
         <FileUpload directoryId={id} userId={userId} />
         <CreateDirectory directoryId={id} userId={userId} />
+        <DirectoryComponent directoryId={id}  />
       </section>
     </div>
   );
