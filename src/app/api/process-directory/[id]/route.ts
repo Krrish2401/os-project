@@ -1,4 +1,3 @@
-// app/api/process-directory/[id]/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import OpenAI from "openai";
@@ -12,14 +11,15 @@ export async function POST(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
-    const { id: id } = await context.params;
+  const { id: dirId } = await context.params;
 
   try {
-    // Step 1: Fetch all files in the directory
+    // Step 1: Fetch the directory and its files
     const directory = await prisma.directory.findUnique({
-      where: { id },
+      where: { id: dirId },
       include: {
-        files: true,
+        files: true, // Include all files in the directory
+        subdirs: true, // Include all subdirectories (child directories)
       },
     });
 
@@ -36,12 +36,41 @@ export async function POST(
       extension: file.extension,
     }));
 
-    // Step 3: Construct a prompt for ChatGPT
+    // Step 3: Process each file and organize into subdirectories
+    for (const file of filesData) {
+      const { id: fileId, extension } = file;
+
+      // Check if a subdirectory with the file's extension exists
+      let subdirectory = directory.subdirs.find(
+        (subdir) => subdir.name === extension
+      );
+
+      // If the subdirectory doesn't exist, create it
+      if (!subdirectory) {
+        subdirectory = await prisma.directory.create({
+          data: {
+            name: extension, // Name the subdirectory after the file extension
+            userId: directory.userId, // Assign ownership to the same user
+            parentId: directory.id, // Link the subdirectory to the current directory
+          },
+        });
+      }
+
+      // Move the file into the subdirectory
+      await prisma.file.update({
+        where: { id: fileId },
+        data: {
+          dirId: subdirectory.id, // Assign the file to the subdirectory
+        },
+      });
+    }
+
+    // Step 4: Construct a prompt for ChatGPT
     const prompt = `
-     hello
+      hello
     `;
 
-    // Step 4: Send the prompt to ChatGPT
+    // Step 5: Send the prompt to ChatGPT
     const chatCompletion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
@@ -49,10 +78,13 @@ export async function POST(
 
     const gptResponse = chatCompletion.choices[0]?.message?.content;
 
-    // Step 5: Return the response
+    // Step 6: Return the response
     return NextResponse.json({ message: gptResponse });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "An error occurred" }, { status: 500 });
+    console.error("Error processing directory:", error);
+    return NextResponse.json(
+      { error: "An error occurred while processing the request." },
+      { status: 500 }
+    );
   }
 }

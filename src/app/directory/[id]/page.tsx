@@ -8,13 +8,13 @@ import { useAuth } from "@/lib/useAuth";
 import FileUpload from "@/components/FileUpload";
 import CreateDirectory from "@/components/CreateDire";
 import  DirectoryComponent  from "@/components/DirectoryComponent";
-
 interface File {
   id: string;
   name: string;
   extension: string;
   fileUrl: string;
 }
+
 
 interface Directory {
   id: string;
