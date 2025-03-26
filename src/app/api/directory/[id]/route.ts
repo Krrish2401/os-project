@@ -49,3 +49,35 @@ export async function GET(
     );
   }
 }
+export async function DELETE(
+  request: Request,
+  context:{ params: Promise<{ id: string }> }
+ 
+) {
+  const { id } = await context.params;
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Directory ID is required." },
+      { status: 400 }
+    );
+  }
+
+  try {
+    // Delete the directory and its associated files/subdirectories
+    await prisma.directory.delete({
+      where: { id },
+    });
+
+    return NextResponse.json(
+      { message: "Directory deleted successfully." },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting directory:", error);
+    return NextResponse.json(
+      { error: "Failed to delete directory." },
+      { status: 500 }
+    );
+  }
+}

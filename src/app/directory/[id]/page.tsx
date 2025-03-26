@@ -35,6 +35,8 @@ export default function DirectoryPage({
   // Unwrap the params promise to get the id
   const { id } = use(params);
 
+
+
   const [contents, setContents] = useState<DirectoryContents>({
     name: "Unknown",
     files: [],
@@ -43,7 +45,12 @@ export default function DirectoryPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { userId, loading: authLoading } = useAuth();
+   const [directories, setDirectories] = useState<Directory[]>([]);
   const router = useRouter();
+
+  const handleDelete = (deletedId: string) => {
+    setDirectories((prev) => prev.filter((dir) => dir.id !== deletedId));
+  };
 
   useEffect(() => {
     const fetchDirectoryContents = async () => {
@@ -115,8 +122,7 @@ export default function DirectoryPage({
   return (
     <div className="p-8 bg-gray-800 min-h-screen">
       <h1 className="text-3xl font-bold mb-6">
-        Directory:{" "}
-        {contents.name || "Unknown"}
+        Directory: {contents.name || "Unknown"}
       </h1>
 
       {/* Subdirectories Section */}
@@ -125,7 +131,12 @@ export default function DirectoryPage({
         {contents.directories.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {contents.directories.map((dir) => (
-              <DirectoryCard key={dir.id} id={dir.id} name={dir.name} />
+              <DirectoryCard
+                key={dir.id}
+                id={dir.id}
+                name={dir.name}
+                onDelete={() => handleDelete(dir.id)}
+              />
             ))}
           </div>
         ) : (
@@ -175,7 +186,7 @@ export default function DirectoryPage({
         )}
         <FileUpload directoryId={id} userId={userId} />
         <CreateDirectory directoryId={id} userId={userId} />
-        <DirectoryComponent directoryId={id}  />
+        <DirectoryComponent directoryId={id} />
       </section>
     </div>
   );

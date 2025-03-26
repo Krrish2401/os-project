@@ -7,6 +7,7 @@ import DirectoryCard from "@/components/DirectoryCard";
 import CreateDirectory from "@/components/CreateDire";
 import FileUpload from "@/components/FileUpload";
 import FileList from "@/components/FileList"; // Import the FileList component
+import DirectoryComponent from "@/components/DirectoryComponent";
 
 interface File {
   id: string;
@@ -27,6 +28,7 @@ export default function RootDirectoryPage() {
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user, userId, loading: authLoading } = useAuth();
+  
 
   useEffect(() => {
     const fetchRootDirectory = async () => {
@@ -96,6 +98,9 @@ export default function RootDirectoryPage() {
       </div>
     );
   }
+  const handleDelete = (deletedId: string) => {
+    setDirectories((prev) => prev.filter((dir) => dir.id !== deletedId));
+  };
 
   return (
     <div className="p-8 bg-gray-800 min-h-screen">
@@ -113,7 +118,12 @@ export default function RootDirectoryPage() {
         {directories.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {directories.map((dir) => (
-              <DirectoryCard key={dir.id} id={dir.id} name={dir.name} />
+              <DirectoryCard
+                key={dir.id}
+                id={dir.id}
+                name={dir.name}
+                onDelete={() => handleDelete(dir.id)}
+              />
             ))}
           </div>
         ) : (
@@ -122,6 +132,7 @@ export default function RootDirectoryPage() {
       </section>
       <CreateDirectory directoryId={rootdirid} userId={userId} />
       <FileUpload directoryId={rootdirid} userId={userId} />
+      <DirectoryComponent directoryId={rootdirid} />
     </div>
   );
 }

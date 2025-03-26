@@ -30,16 +30,18 @@ export async function POST(
       );
     }
 
-    // Step 2: Organize files into an object of id and extension
-    const filesData = directory.files.map((file) => ({
-      id: file.id,
-      extension: file.extension,
-    }));
+    // Step 2: Group files by their extensions
+    const filesByExtension = directory.files.reduce((acc, file) => {
+      const { extension } = file;
+      if (!acc[extension]) {
+        acc[extension] = [];
+      }
+      acc[extension].push(file);
+      return acc;
+    }, {} as Record<string, typeof directory.files>);
 
-    // Step 3: Process each file and organize into subdirectories
-    for (const file of filesData) {
-      const { id: fileId, extension } = file;
-
+    // Step 3: Process each extension group
+    for (const [extension, files] of Object.entries(filesByExtension)) {
       // Check if a subdirectory with the file's extension exists
       let subdirectory = directory.subdirs.find(
         (subdir) => subdir.name === extension
@@ -56,11 +58,13 @@ export async function POST(
         });
       }
 
-      // Move the file into the subdirectory
-      await prisma.file.update({
-        where: { id: fileId },
+      // Move all files with this extension into the subdirectory
+      await prisma.file.updateMany({
+        where: {
+          id: { in: files.map((file) => file.id) }, // Update all files in this group
+        },
         data: {
-          dirId: subdirectory.id, // Assign the file to the subdirectory
+          dirId: subdirectory.id, // Assign the files to the subdirectory
         },
       });
     }
