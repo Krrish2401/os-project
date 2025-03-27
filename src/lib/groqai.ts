@@ -13,7 +13,7 @@ export async function sendMetadataToGroqAI(metadata: any) {
                 },
                 {
                     role: "user",
-                    content: `Analyze the following metadata and provide suggestion about better file organization: ${JSON.stringify(metadata)}`,
+                    content: `Analyze the following metadata and provide suggestion about better file organization, do not provide code of any sort and no need to list the metadata given, just the suggestions: ${JSON.stringify(metadata)}`,
                 },
             ],
             model: "llama-3.3-70b-versatile", // Replace with the appropriate model if needed
