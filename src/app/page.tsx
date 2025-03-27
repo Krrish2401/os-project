@@ -100,7 +100,7 @@ export default function Home() {
 
       {mostAccessedDirectory ? (
         <div className="p-4 bg-white rounded-lg shadow-md mt-6">
-          <h2 className="text-xl font-semibold mb-2">Most Accessed Directory</h2>
+          <h2 className="text-xl text-black font-semibold mb-2">Most Accessed Directory</h2>
           <Link
             href={`/directory/${mostAccessedDirectory.id}`}
             className={`text-lg text-blue-500 hover:underline ${
