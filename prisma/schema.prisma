@@ -26,7 +26,7 @@ model Directory {
   userId      String
   user        User       @relation("UserDirectories", references: [id], fields: [userId])
   parentId    String?
-  parent      Directory? @relation("ParentDirectory", fields: [parentId], references: [id])
+  parent      Directory? @relation("ParentDirectory", fields: [parentId], references: [id], onDelete: Cascade)
   subdirs     Directory[] @relation("ParentDirectory")
   files       File[]
   rootFor     User?      @relation("UserRootDir") // User who has this as their root directory
@@ -40,11 +40,10 @@ model File {
   userId      String
   user        User       @relation(fields: [userId], references: [id])
   dirId       String
-  directory   Directory  @relation(fields: [dirId], references: [id])
+  directory   Directory  @relation(fields: [dirId], references: [id], onDelete: Cascade)
   name        String
   extension   String
   fileUrl     String   // URL of the file in Appwrite Storage
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-
-} 
+}

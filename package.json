@@ -10,27 +10,27 @@
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "@reduxjs/toolkit": "^2.6.1",
     "appwrite": "^17.0.1",
     "firebase": "^11.4.0",
     "firebase-admin": "^13.2.0",
     "groq-sdk": "^0.17.0",
     "next": "15.2.2",
+    "openai": "^4.89.0",
     "prisma": "^6.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20.17.25",
+    "@types/node": "^20.17.27",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "eslint": "^9",
     "eslint-config-next": "15.2.2",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
+  }
 }

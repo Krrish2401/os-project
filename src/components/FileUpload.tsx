@@ -16,7 +16,7 @@ export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+    setFile(e.target.files[0]);
     }
   };
 
@@ -47,7 +47,7 @@ export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
 
       if (!response.ok) {
         setError(result.error || "Failed to upload file.");
-        return;
+        
       }
 
       setSuccess(true);
