@@ -55,7 +55,7 @@ export default function CreateDirectory({ directoryId }: CreateDirectoryProps) {
   };
 
   return (
-    <div className="p-4 bg-gray-700 mt-6 rounded-lg shadow-md">
+    <div className="p-4 bg-gray-700 mt-6  rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4">Create Subdirectory</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">

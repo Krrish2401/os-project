@@ -130,9 +130,17 @@ export default function RootDirectoryPage() {
           <p className="text-gray-500">No directories found.</p>
         )}
       </section>
-      <CreateDirectory directoryId={rootdirid} userId={userId} />
-      <FileUpload directoryId={rootdirid} userId={userId} />
-      <DirectoryComponent directoryId={rootdirid} />
+      <div className="flex space-x-4">
+        <div className="w-1/3">
+          <CreateDirectory directoryId={rootdirid} userId={userId} />
+        </div>
+        <div className="w-1/3">
+          <FileUpload directoryId={rootdirid} userId={userId} />
+        </div>
+        <div className="w-1/3">
+          <DirectoryComponent directoryId={rootdirid} />
+        </div>
+      </div>
     </div>
   );
 }

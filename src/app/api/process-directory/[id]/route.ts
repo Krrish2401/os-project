@@ -71,7 +71,7 @@ export async function POST(
 
     // Step 4: Construct a prompt for ChatGPT
     const prompt = `
-      hello
+     only reply with  "files processed" with a happy message and dont reply anything else
     `;
 
     // Step 5: Send the prompt to ChatGPT

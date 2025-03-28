@@ -43,7 +43,7 @@ export default function ProcessDirectoryAI({
   };
 
   return (
-    <div className="p-4 bg-gray-700 rounded-lg mt-4 shadow-md">
+    <div className="p-4 bg-gray-700  rounded-lg mt-4 shadow-md">
       <h2 className="text-lg font-semibold mb-4">Process Files with AI</h2>
 
       {/* Process Button */}

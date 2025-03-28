@@ -7,7 +7,7 @@ import DirectoryCard from "@/components/DirectoryCard";
 import { useAuth } from "@/lib/useAuth";
 import FileUpload from "@/components/FileUpload";
 import CreateDirectory from "@/components/CreateDire";
-import  DirectoryComponent  from "@/components/DirectoryComponent";
+import DirectoryComponent from "@/components/DirectoryComponent";
 interface File {
   id: string;
   name: string;
@@ -15,14 +15,13 @@ interface File {
   fileUrl: string;
 }
 
-
 interface Directory {
   id: string;
   name: string;
 }
 
 interface DirectoryContents {
-  name : string;
+  name: string;
   files: File[];
   directories: Directory[];
 }
@@ -35,8 +34,6 @@ export default function DirectoryPage({
   // Unwrap the params promise to get the id
   const { id } = use(params);
 
-
-
   const [contents, setContents] = useState<DirectoryContents>({
     name: "Unknown",
     files: [],
@@ -45,7 +42,7 @@ export default function DirectoryPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { userId, loading: authLoading } = useAuth();
-   const [directories, setDirectories] = useState<Directory[]>([]);
+  const [directories, setDirectories] = useState<Directory[]>([]);
   const router = useRouter();
 
   const handleDelete = (deletedId: string) => {
@@ -184,9 +181,11 @@ export default function DirectoryPage({
         ) : (
           <p className="text-gray-500">No files found.</p>
         )}
-        <FileUpload directoryId={id} userId={userId} />
-        <CreateDirectory directoryId={id} userId={userId} />
-        <DirectoryComponent directoryId={id} />
+        <div className="flex space-x-4">
+          <FileUpload directoryId={id} userId={userId} />
+          <CreateDirectory directoryId={id} userId={userId} />
+          <DirectoryComponent directoryId={id} />
+        </div>
       </section>
     </div>
   );
