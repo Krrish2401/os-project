@@ -4,27 +4,67 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../lib/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth(); // Use loading state from useAuth
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [mostAccessedDirectory, setMostAccessedDirectory] = useState(null);
-  const [isUpdating,setIsUpdating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [insightsData, setInsightsData] = useState<any>(null);
+  const [insightsLoading, setInsightsLoading] = useState(true);
+  const [insightsError, setInsightsError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return; // Wait for authentication to resolve
+
     if (!user) {
       setLoading(true);
     } else {
       setLoading(false);
       const fetchMostAccessedDirectory = async () => {
-        const response = await fetch("/api/getMostAccessedDirectory");
+        const response = await fetch("/api/getMostAccessedDirectory",{
+          headers: {
+            "x-user-id":user.uid,
+          },
+        });
         const data = await response.json();
         setMostAccessedDirectory(data.directory);
       };
       fetchMostAccessedDirectory();
     }
-  }, [user]);
+  }, [user, authLoading]);
+
+  useEffect(() => {
+    async function fetchInsights() {
+      if (!user?.uid) {
+        setInsightsError("User ID is not available.");
+        setInsightsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/getMetadata?userId=${user.uid}`); // Use dynamic userId
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || "Failed to fetch insights.");
+        }
+
+        setInsightsData(result);
+      } catch (err) {
+        console.error(err);
+        setInsightsError(err.message);
+      } finally {
+        setInsightsLoading(false);
+      }
+    }
+
+    if (!authLoading && user) {
+      fetchInsights();
+    }
+  }, [user, authLoading]);
 
   const updateAccessCount = async () => {
     if (!mostAccessedDirectory?.id) {
@@ -40,31 +80,32 @@ export default function Home() {
       });
     } catch (error) {
       console.error("Failed to update access count:", error);
-    }finally{
+    } finally {
       setIsUpdating(false);
     }
   };
 
-  if (!user) return null;
-
-  if (loading) {
+  if (authLoading || loading) {
     return <div className="text-center py-8">Loading...</div>;
   }
+
+  if (!user) return null;
 
   return (
     <>
       <h1 className="text-2xl font-semibold">
         Welcome back, {user?.email || "User"}!
-        <span className="text-gray-600">({user?.uid})</span>
       </h1>
       <p className="mt-4">You are now signed in.</p>
 
       {mostAccessedDirectory ? (
         <div className="p-4 bg-white rounded-lg shadow-md mt-6">
-          <h2 className="text-xl font-semibold mb-2">Most Accessed Directory</h2>
+          <h2 className="text-xl text-black font-semibold mb-2">Most Accessed Directory</h2>
           <Link
-            href={`/directory/${mostAccessedDirectory.id}`} 
-            className={`text-lg text-blue-500 hover:underline ${isUpdating ? "pointer-events-none text-gray-400" : ""}`}
+            href={`/directory/${mostAccessedDirectory.id}`}
+            className={`text-lg text-blue-500 hover:underline ${
+              isUpdating ? "pointer-events-none text-gray-400" : ""
+            }`}
             onClick={updateAccessCount}
           >
             {mostAccessedDirectory.name}
@@ -73,6 +114,39 @@ export default function Home() {
       ) : (
         <p className="text-gray-500 mt-6">No directory data available.</p>
       )}
+
+      {/* Insights Section */}
+      <div className="insights mt-8">
+        <h1 className="text-xl font-semibold">Insights</h1>
+        {insightsLoading && <p>Loading insights...</p>}
+        {insightsError && <p>Error: {insightsError}</p>}
+        {insightsData && (
+          <>
+            {/* Recommended File */}
+            <div className="recommended-file p-4 bg-white rounded-lg shadow-md mt-4">
+              <h2 className="text-lg text-black font-semibold mb-2">Recommended File to Open</h2>
+              <p className="text-gray-700">
+                {insightsData.FileName.choices[0]?.message?.content?.split("\n")[0] ||
+                  "No recommendation available."}
+              </p>
+            </div>
+
+            {/* Suggestions for Better Organization */}
+            <div className="organization-suggestions p-4 bg-white rounded-lg shadow-md mt-4">
+              <h2 className="text-black font-semibold mb-2">Suggestions for Better Organization</h2>
+              <ReactMarkdown
+                components={{
+                  p: ({ node, ...props }) => <p {...props} className="text-black" />,
+                  li: ({ node, ...props }) => <li {...props} className="text-black" />,
+                }}
+              >
+                {insightsData.insights.choices[0]?.message?.content?.split("\n").slice(1).join("\n") ||
+                  "No suggestions available."}
+              </ReactMarkdown>
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Navigation Buttons */}
       <div className="mt-8 space-y-4">
