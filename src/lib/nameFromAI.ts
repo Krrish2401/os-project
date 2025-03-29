@@ -13,7 +13,7 @@ export async function recommendedFileName(metadata: any) {
                 },
                 {
                     role: "user",
-                    content: `Analyze the following metadata and provide only the file name that should be opened at the current time: ${JSON.stringify(metadata)}`,
+                    content: `Analyze the following metadata and provide only the file name, with its fileUrl, that should be opened at the current time..do not provide any explaination, just two json pair,name(full name with extension) and url: ${JSON.stringify(metadata)}`,
                 },
             ],
             model: "llama-3.3-70b-versatile", // Replace with the appropriate model if needed
