@@ -125,10 +125,23 @@ export default function Home() {
             {/* Recommended File */}
             <div className="recommended-file p-4 bg-white rounded-lg shadow-md mt-4">
               <h2 className="text-lg text-black font-semibold mb-2">Recommended File to Open</h2>
-              <p className="text-gray-700">
-                {insightsData.FileName.choices[0]?.message?.content?.split("\n")[0] ||
-                  "No recommendation available."}
-              </p>
+              {insightsData.FileName?.choices[0]?.message?.content ? (
+                (() => {
+                  const { name, fileUrl } = JSON.parse(insightsData.FileName.choices[0].message.content);
+                  return (
+                    <a
+                      href={fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      {name}
+                    </a>
+                  );
+                })()
+              ) : (
+                <p className="text-gray-700">No recommendation available.</p>
+              )}
             </div>
 
             {/* Suggestions for Better Organization */}
