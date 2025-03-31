@@ -27,8 +27,8 @@ export default function Home() {
     } else {
       setLoading(false);
       const fetchMostAccessedDirectory = async () => {
-        const response = await fetch("/api/getMostAccessedDirectory",  {
-          headers: { "x-user-id":  user.uid },
+        const response = await fetch("/api/getMostAccessedDirectory", {
+          headers: { "x-user-id": user.uid },
         });
         const data = await response.json();
         setMostAccessedDirectory(data.directory);
@@ -45,7 +45,7 @@ export default function Home() {
         return;
       }
       try {
-        const response = await fetch(/api/getMetadata?userId=${user.uid});
+        const response = await fetch(`/api/getMetadata?userId=${user.uid}`);
         const result = await response.json();
         if (!result.success) {
           throw new Error(result.error || "Failed to fetch insights.");
@@ -80,7 +80,7 @@ export default function Home() {
   };
 
   if (authLoading || loading) {
-    return <LoadingSpinner/>;
+    return <LoadingSpinner />;
   }
   if (!user) return null;
 
@@ -118,10 +118,10 @@ export default function Home() {
           </p>
           <div className="mt-6 w-full flex flex-col space-y-4 items-center">
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push("/root-dir")}
-              className="relative px-4 py-3 text-sm font-medium text-white transition-all duration-300 bg-gray-900/20 border border-gray-500/30 rounded-lg shadow-md backdrop-blur-sm hover:scale-102 hover:bg-gray-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 w-3/4"
+              className="relative px-6 py-3 text-sm font-medium text-white transition-all duration-300 bg-gradient-to-r from-black via-blue-500 to-black rounded-lg shadow-lg  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 w-3/4"
             >
               Go to Root Directory
             </motion.button>
@@ -151,7 +151,7 @@ export default function Home() {
             </h2>
             {mostAccessedDirectory ? (
               <Link
-                href={/directory/${mostAccessedDirectory.id}}
+                href={`/directory/${mostAccessedDirectory.id}`}
                 className="text-lg text-[#17BEBB] hover:underline"
                 onClick={updateAccessCount}
               >

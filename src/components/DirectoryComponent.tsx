@@ -21,7 +21,7 @@ export default function ProcessDirectoryAI({
 
     try {
       // Call the backend API to process the directory
-      const apiResponse = await fetch(/api/process-directory/${directoryId}, {
+      const apiResponse = await fetch(`/api/process-directory/${directoryId}`, {
         method: "POST",
       });
 

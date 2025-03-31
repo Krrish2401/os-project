@@ -60,10 +60,10 @@ export default function AuthPage() {
       console.log("API response:", responseData);
 
       if (!response.ok) {
-        throw new Error(API error: ${responseData.error});
+        throw new Error(`API error: ${responseData.error}`);
       }
 
-      alert(Signed in as ${name});
+      alert(`Signed in as ${name}`);
       router.push("/");
     } catch (error) {
       console.error("Error during Google Sign-In:", error);
