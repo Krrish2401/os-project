@@ -62,7 +62,7 @@ export default function DirectoryPage({
           return;
         }
 
-        const response = await fetch(/api/directory/${id}, {
+        const response = await fetch(`/api/directory/${id}`, {
           headers: {
             "x-user-id": userId,
           },
