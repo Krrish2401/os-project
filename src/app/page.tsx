@@ -5,9 +5,13 @@ import { useAuth } from "../lib/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { FaUserCircle } from "react-icons/fa"; // Import the user profile icon
+import { motion } from "framer-motion";
+import LoadingSpinner from "@/components/LoadinSpinner";
 
 export default function Home() {
-  const { user, loading: authLoading } = useAuth(); // Use loading state from useAuth
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [mostAccessedDirectory, setMostAccessedDirectory] = useState(null);
@@ -17,17 +21,14 @@ export default function Home() {
   const [insightsError, setInsightsError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (authLoading) return; // Wait for authentication to resolve
-
+    if (authLoading) return;
     if (!user) {
       setLoading(true);
     } else {
       setLoading(false);
       const fetchMostAccessedDirectory = async () => {
-        const response = await fetch("/api/getMostAccessedDirectory", {
-          headers: {
-            "x-user-id": user.uid,
-          },
+        const response = await fetch("/api/getMostAccessedDirectory",  {
+          headers: { "x-user-id":  user.uid },
         });
         const data = await response.json();
         setMostAccessedDirectory(data.directory);
@@ -43,15 +44,12 @@ export default function Home() {
         setInsightsLoading(false);
         return;
       }
-
       try {
-        const response = await fetch(`/api/getMetadata?userId=${user.uid}`); // Use dynamic userId
+        const response = await fetch(/api/getMetadata?userId=${user.uid});
         const result = await response.json();
-
         if (!result.success) {
           throw new Error(result.error || "Failed to fetch insights.");
         }
-
         setInsightsData(result);
       } catch (err) {
         console.error(err);
@@ -60,17 +58,13 @@ export default function Home() {
         setInsightsLoading(false);
       }
     }
-
     if (!authLoading && user) {
       fetchInsights();
     }
   }, [user, authLoading]);
 
   const updateAccessCount = async () => {
-    if (!mostAccessedDirectory?.id) {
-      console.error("No directory ID available to update access count.");
-      return;
-    }
+    if (!mostAccessedDirectory?.id) return;
     setIsUpdating(true);
     try {
       await fetch("/api/updateDirectoryAccess", {
@@ -86,95 +80,155 @@ export default function Home() {
   };
 
   if (authLoading || loading) {
-    return <div className="text-center py-8">Loading...</div>;
+    return <LoadingSpinner/>;
   }
-
   if (!user) return null;
 
   return (
-    <>
-      <h1 className="text-2xl font-semibold">
-        Welcome back, {user?.email || "User"}!
-      </h1>
-      <p className="mt-4">You are now signed in.</p>
+    <div
+      className="min-h-screen bg-cover bg-center bg-no-repeat relative overflow-hidden"
+      style={{ backgroundImage: "url('/background.png')" }}
+    >
+      {/* Optional Overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
 
-      {mostAccessedDirectory ? (
-        <div className="p-4 bg-white rounded-lg shadow-md mt-6">
-          <h2 className="text-xl text-black font-semibold mb-2">Most Accessed Directory</h2>
-          <Link
-            href={`/directory/${mostAccessedDirectory.id}`}
-            className={`text-lg text-blue-500 hover:underline ${isUpdating ? "pointer-events-none text-gray-400" : ""
-              }`}
-            onClick={updateAccessCount}
-          >
-            {mostAccessedDirectory.name}
-          </Link>
-        </div>
-      ) : (
-        <p className="text-gray-500 mt-6">No directory data available.</p>
-      )}
+      <div className="relative z-10 p-6 flex">
+        {/* Left Section - 40% */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="w-2/5 p-6 flex flex-col items-center justify-center text-white -mt-15"
+        >
+          <div className="mb-6">
+            {/* User Profile Icon with Gradient */}
+            <FaUserCircle
+              className="w-24 h-24 bg-clip-text"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right, #4facfe, #00f2fe, #00c6ff, #0072ff)",
+              }}
+            />
+          </div>
+          <h1 className="text-3xl text-center font-bold">
+            Welcome back, {user?.email || "User"}!
+          </h1>
+          <p className="text-gray-300 mt-2 text-center">
+            Manage your files, directories, and insights all in one place.
+          </p>
+          <div className="mt-6 w-full flex flex-col space-y-4 items-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push("/root-dir")}
+              className="relative px-4 py-3 text-sm font-medium text-white transition-all duration-300 bg-gray-900/20 border border-gray-500/30 rounded-lg shadow-md backdrop-blur-sm hover:scale-102 hover:bg-gray-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 w-3/4"
+            >
+              Go to Root Directory
+            </motion.button>
+          </div>
+        </motion.div>
 
-      {/* Insights Section */}
-      <div className="insights mt-8">
-        <h1 className="text-xl font-semibold">Insights</h1>
-        {insightsLoading && <p>Loading insights...</p>}
-        {insightsError && <p>Error: {insightsError}</p>}
-        {insightsData && (
-          <>
-            {/* Recommended File */}
-            <div className="recommended-file p-4 bg-white rounded-lg shadow-md mt-4">
-              <h2 className="text-lg text-black font-semibold mb-2">Recommended File to Open</h2>
-              {insightsData.FileName?.choices[0]?.message?.content ? (
-                (() => {
-                  const { name, fileUrl } = JSON.parse(insightsData.FileName.choices[0].message.content);
-                  return (
-                    <a
-                      href={fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      {name}
-                    </a>
-                  );
-                })()
-              ) : (
-                <p className="text-gray-700">No recommendation available.</p>
-              )}
-            </div>
-
-            {/* Suggestions for Better Organization */}
-            <div className="organization-suggestions p-4 bg-white rounded-lg shadow-md mt-4">
-              <h2 className="text-black font-semibold mb-2">Suggestions for Better Organization</h2>
-              <ReactMarkdown
-                components={{
-                  p: ({ node, ...props }) => <p {...props} className="text-black" />,
-                  li: ({ node, ...props }) => <li {...props} className="text-black" />,
-                }}
+        {/* Right Section - 60% */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="w-3/5 p-6 space-y-6 h-screen"
+        >
+          {/* Most Accessed Directory */}
+          <div className="relative p-6 rounded-xl shadow-lg border-2 border-white/20 bg-white/10">
+            <GlowingEffect
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <h2 className="text-xl font-semibold text-white mb-4">
+              Most Accessed Directory
+            </h2>
+            {mostAccessedDirectory ? (
+              <Link
+                href={/directory/${mostAccessedDirectory.id}}
+                className="text-lg text-[#17BEBB] hover:underline"
+                onClick={updateAccessCount}
               >
-                {insightsData.insights.choices[0]?.message?.content?.split("\n").slice(1).join("\n") ||
-                  "No suggestions available."}
-              </ReactMarkdown>
-            </div>
-          </>
-        )}
-      </div>
+                {mostAccessedDirectory.name}
+              </Link>
+            ) : (
+              <p className="text-gray-500">No directory data available.</p>
+            )}
+          </div>
 
-      {/* Navigation Buttons */}
-      <div className="mt-8 space-y-4">
-        <button
-          onClick={() => router.push("/root-dir")}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Go to Root Directory
-        </button>
-        <button
-          onClick={() => router.push("/upload")}
-          className="px-4 py-2 bg-green-500 text-white rounded"
-        >
-          Upload to Root Directory
-        </button>
+          {/* Recommended File */}
+          <div className="relative p-4 rounded-xl shadow-lg border-2 border-white/20 bg-white/10">
+            <GlowingEffect
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <h3 className="text-lg font-semibold text-white mb-2">
+              Recommended File to Open
+            </h3>
+            {insightsData?.FileName?.choices[0]?.message?.content ? (
+              (() => {
+                const { name, fileUrl } = JSON.parse(
+                  insightsData.FileName.choices[0].message.content
+                );
+                return (
+                  <a
+                    href={fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#17BEBB] hover:underline"
+                  >
+                    {name}
+                  </a>
+                );
+              })()
+            ) : (
+              <p className="text-gray-300">No recommendation available.</p>
+            )}
+          </div>
+
+          {/* File Insights */}
+          <div className="relative p-4 rounded-xl shadow-lg border-2 border-white/20 bg-white/10">
+            <GlowingEffect
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <h3 className="text-lg font-semibold text-white mb-2">
+              File Insights
+            </h3>
+            <ReactMarkdown
+              components={{
+                p: ({ node, ...props }) => (
+                  <p {...props} className="text-gray-300" />
+                ),
+                li: ({ node, ...props }) => (
+                  <li {...props} className="text-gray-300" />
+                ),
+              }}
+            >
+              {insightsData?.insights?.choices[0]?.message?.content
+                ?.split("\n")
+                .slice(1)
+                .join("\n") || "No insights available."}
+            </ReactMarkdown>
+          </div>
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 }

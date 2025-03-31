@@ -7,7 +7,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Await the params promise to safely access the `id`
+    // Await the params promise to safely access the id
     const { id: directoryId } = await context.params;
     const userId = request.headers.get("x-user-id");
 
