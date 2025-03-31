@@ -35,16 +35,16 @@ export default function DirectoryCard({
 
   const handleDelete = async () => {
     if (isDeleting) return; // Prevent multiple calls
-    if (!confirm(`Are you sure you want to delete the directory "${name}"?`))
+    if (!confirm(Are you sure you want to delete the directory "${name}"?))
       return;
 
     setIsDeleting(true); // Disable further clicks
     try {
-      await fetch(`/api/directory/${id}`, {
+      await fetch(/api/directory/${id}, {
         method: "DELETE",
       });
 
-      console.log(`Directory ${name} deleted successfully.`);
+      console.log(Directory ${name} deleted successfully.);
       onDelete(); // Trigger UI update
     } catch (error) {
       console.error("Error deleting directory:", error);
@@ -54,10 +54,9 @@ export default function DirectoryCard({
   };
 
   return (
-    <div className="relative">
+    <div className="relative hover:scale-102 mx-1.5 ">
       {/* Delete Button */}
-      <button
-        className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors duration-300"
+      <button className=" absolute top-4 right-2 inline-flex items-center hover:shadow-blue-200 shadow-red-400 justify-center px-4 py-2 text-sm font-medium text-white transition-all duration-300 bg-gray-900/20 border border-gray-500/30 rounded-lg shadow-md backdrop-blur-sm hover:scale-102 hover:bg-gray-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
         onClick={handleDelete}
         disabled={isDeleting}
       >
@@ -66,13 +65,13 @@ export default function DirectoryCard({
 
       {/* Directory Card */}
       <Link
-        href={`/directory/${id}`}
+        href={/directory/${id}}
         className={`block ${
-          isUpdating ? "pointer-events-none text-gray-400" : ""
+          isUpdating ? "pointer-events-none text-gray-200" : ""
         }`} // Disable link styling
         onClick={updateAccessCount}
       >
-        <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+        <div className="p-6 bg-white/10  rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-center space-x-3">
             {/* Folder Icon */}
             <svg
@@ -90,7 +89,7 @@ export default function DirectoryCard({
               />
             </svg>
             {/* Directory Name */}
-            <span className="text-lg font-medium text-gray-800">{name}</span>
+            <span className="text-lg font-medium text-gray-200">{name}</span>
           </div>
         </div>
       </Link>
