@@ -24,9 +24,9 @@ export default function Home() {
     } else {
       setLoading(false);
       const fetchMostAccessedDirectory = async () => {
-        const response = await fetch("/api/getMostAccessedDirectory",{
+        const response = await fetch("/api/getMostAccessedDirectory", {
           headers: {
-            "x-user-id":user.uid,
+            "x-user-id": user.uid,
           },
         });
         const data = await response.json();
@@ -103,9 +103,8 @@ export default function Home() {
           <h2 className="text-xl text-black font-semibold mb-2">Most Accessed Directory</h2>
           <Link
             href={`/directory/${mostAccessedDirectory.id}`}
-            className={`text-lg text-blue-500 hover:underline ${
-              isUpdating ? "pointer-events-none text-gray-400" : ""
-            }`}
+            className={`text-lg text-blue-500 hover:underline ${isUpdating ? "pointer-events-none text-gray-400" : ""
+              }`}
             onClick={updateAccessCount}
           >
             {mostAccessedDirectory.name}
