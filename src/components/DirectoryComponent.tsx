@@ -1,7 +1,7 @@
-// components/ProcessDirectoryAI.tsx
 "use client";
 
 import { useState } from "react";
+import { GlowingEffect } from "./ui/glowing-effect";
 
 interface ProcessDirectoryAIProps {
   directoryId: string; // ID of the directory to process
@@ -21,7 +21,7 @@ export default function ProcessDirectoryAI({
 
     try {
       // Call the backend API to process the directory
-      const apiResponse = await fetch(`/api/process-directory/${directoryId}`, {
+      const apiResponse = await fetch(/api/process-directory/${directoryId}, {
         method: "POST",
       });
 
@@ -43,23 +43,50 @@ export default function ProcessDirectoryAI({
   };
 
   return (
-    <div className="p-4 bg-gray-700  rounded-lg mt-4 shadow-md">
-      <h2 className="text-lg font-semibold mb-4">Process Files with AI</h2>
+    <div className="p-6 rounded-lg shadow-md h-full flex flex-col justify-between">
+      {/* Glowing Effect */}
+      <GlowingEffect
+        blur={0}
+        borderWidth={5}
+        spread={80}
+        glow={true}
+        disabled={false}
+        proximity={64}
+        inactiveZone={0.01}
+      />
+
+      {/* Content Section */}
+      <div>
+        {/* Heading */}
+        <h2 className="text-xl font-bold mb-5 text-white">
+          Organise with AI
+        </h2>
+
+        {!response && (
+          <p className="mt-2 text-md text-gray-300 font-bold">
+            Sort your files with AI!
+          </p>
+        )}
+
+        {/* Success or Error Message */}
+        {response && (
+          <p className="mt-2 text-sm text-green-400 font-bold">
+            AI Response: {response}
+          </p>
+        )}
+        {error && (
+          <p className="mt-2 text-sm text-red-600 font-medium">{error}</p>
+        )}
+      </div>
 
       {/* Process Button */}
       <button
         onClick={handleProcessFiles}
         disabled={processing}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+        className="w-full hover:shadow-blue-200 shadow-cyan-200 px-4 py-4 text-md font-medium text-white transition-all duration-300 bg-gray-900/20 border border-gray-500/30 rounded-lg shadow-md backdrop-blur-sm hover:scale-102 hover:bg-gray-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:bg-gray-400"
       >
         {processing ? "Processing..." : "Process Files"}
       </button>
-
-      {/* Success or Error Message */}
-      {response && (
-        <p className="mt-2 text-green-500">ChatGPT Response: {response}</p>
-      )}
-      {error && <p className="mt-2 text-red-500">{error}</p>}
     </div>
   );
 }

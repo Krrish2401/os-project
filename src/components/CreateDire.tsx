@@ -54,36 +54,44 @@ export default function CreateDirectory({ directoryId }: CreateDirectoryProps) {
     }
   };
 
-  return (
-    <div className="p-4 bg-gray-700 mt-6  rounded-lg shadow-md">
-      <h2 className="text-lg font-semibold mb-4">Create Subdirectory</h2>
+ return (
+   <div className="p-6 rounded-lg shadow-md">
+     {/* Heading */}
+     <h2 className="text-xl font-bold mb-5 text-white">Create Subdirectory</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Input for Directory Name */}
-        <input
-          type="text"
-          value={directoryName}
-          onChange={(e) => setDirectoryName(e.target.value)}
-          placeholder="Enter directory name"
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
+     <form onSubmit={handleSubmit} className="space-y-4">
+       {/* Input for Directory Name */}
+       <div>
+        
+        
+         <input
+           id="directoryName"
+           type="text"
+           value={directoryName}
+           onChange={(e) => setDirectoryName(e.target.value)}
+           placeholder="Enter directory name"
+           className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+           required
+         />
+       </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
-        >
-          {loading ? "Creating..." : "Create Directory"}
-        </button>
-      </form>
+       {/* Submit Button */}
+       <button
+         type="submit"
+         disabled={loading}
+         className="w-full hover:shadow-blue-200 shadow-blue-400 px-4 py-4 text-md font-medium text-white transition-all duration-300 bg-gray-900/20 border border-gray-500/30 rounded-lg shadow-md backdrop-blur-sm hover:scale-102 hover:bg-gray-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:bg-gray-400"
+       >
+         {loading ? "Creating..." : "Create Directory"}
+       </button>
+     </form>
 
-      {/* Success or Error Message */}
-      {success && (
-        <p className="mt-2 text-green-500">Directory created successfully!</p>
-      )}
-      {error && <p className="mt-2 text-red-500">{error}</p>}
-    </div>
-  );
+     {/* Success or Error Message */}
+     {success && (
+       <p className="mt-4 text-sm text-green-600 font-medium">
+         Directory created successfully!
+       </p>
+     )}
+     {error && <p className="mt-4 text-sm text-red-600 font-medium">{error}</p>}
+   </div>
+ );
 }
