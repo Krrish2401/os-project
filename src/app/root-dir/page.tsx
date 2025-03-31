@@ -8,6 +8,8 @@ import CreateDirectory from "@/components/CreateDire";
 import FileUpload from "@/components/FileUpload";
 import FileList from "@/components/FileList"; // Import the FileList component
 import DirectoryComponent from "@/components/DirectoryComponent";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { GlowingEffect2 } from "@/components/ui/glowing-effect2";
 
 interface File {
   id: string;
@@ -103,42 +105,110 @@ export default function RootDirectoryPage() {
   };
 
   return (
-    <div className="p-8 bg-gray-800 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Root Directory</h1>
+    <div
+      className="p-8 min-h-screen bg-cover bg-center bg-no-repeat relative"
+      style={{ backgroundImage: "url('/background.png')" }}
+    >
+      {/* Optional Overlay for Better Contrast */}
+      <div className="absolute inset-0 bg-black/50"></div>
 
-      {/* Files Section */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Files</h2>
-        <FileList files={files} /> {/* Use the FileList component here */}
-      </section>
+      <div className="relative z-10">
+        <h1 className="text-3xl text-center font-bold mb-6 text-white">
+          Root Directory
+        </h1>
 
-      {/* Directories Section */}
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Directories</h2>
-        {directories.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {directories.map((dir) => (
-              <DirectoryCard
-                key={dir.id}
-                id={dir.id}
-                name={dir.name}
-                onDelete={() => handleDelete(dir.id)}
-              />
-            ))}
+        {/* Files Section */}
+        <div className="flex gap-8">
+          {/* Files Section */}
+          <div className="relative w-1/3 p-4 rounded-xl shadow-lg border-2 border-white/20 bg-white/10 ">
+            <GlowingEffect
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <section className=" rounded-lg   h-[50vh] overflow-y-auto">
+              <h2 className="text-2xl  font-semibold mb-6 text-white">Files</h2>
+              <FileList files={files} /> {/* Use the FileList component here */}
+            </section>
           </div>
-        ) : (
-          <p className="text-gray-500">No directories found.</p>
-        )}
-      </section>
-      <div className="flex space-x-4">
-        <div className="w-1/3">
-          <CreateDirectory directoryId={rootdirid} userId={userId} />
+
+          {/* Directories Section */}
+          <div className="relative w-2/3 p-4 rounded-xl shadow-lg border-2 border-white/20 bg-white/10 ">
+            <GlowingEffect
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <section className="h-[50vh] rounded-lg  overflow-y-auto">
+              <h2 className="text-2xl  font-semibold mb-6 text-white">
+                Directories
+              </h2>
+              {directories.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2   lg:grid-cols-2 gap-4">
+                  {directories.map((dir) => (
+                    <DirectoryCard
+                      key={dir.id}
+                      id={dir.id}
+                      name={dir.name}
+                      onDelete={() => handleDelete(dir.id)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">No directories found.</p>
+              )}
+            </section>
+          </div>
         </div>
-        <div className="w-1/3">
-          <FileUpload directoryId={rootdirid} userId={userId} />
-        </div>
-        <div className="w-1/3">
-          <DirectoryComponent directoryId={rootdirid} />
+
+        <div className="flex space-x-4 mt-8">
+          <div className="relative w-full   rounded-xl shadow-lg border-2 border-white/20 bg-white/10">
+            <GlowingEffect2
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <DirectoryComponent directoryId={rootdirid} />
+          </div>
+
+          <div className="relative w-full   rounded-xl shadow-lg border-2 border-white/20 bg-white/10">
+            <GlowingEffect
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <FileUpload directoryId={rootdirid} userId={userId} />
+          </div>
+          <div className="relative w-full   rounded-xl shadow-lg border-2 border-white/20 bg-white/10">
+            <GlowingEffect
+              blur={0}
+              borderWidth={5}
+              spread={80}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            />
+            <div className="">
+              <CreateDirectory directoryId={rootdirid} userId={userId} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
