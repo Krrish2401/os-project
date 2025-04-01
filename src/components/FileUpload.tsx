@@ -4,11 +4,11 @@
 import { useState } from "react";
 
 interface FileUploadProps {
-    directoryId: string;
-    userId :string  // ID of the directory where the file will be uploaded
+  directoryId: string;
+  userId: string  // ID of the directory where the file will be uploaded
 }
 
-export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
+export default function FileUpload({ directoryId, userId }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,7 @@ export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-    setFile(e.target.files[0]);
+      setFile(e.target.files[0]);
     }
   };
 
@@ -33,10 +33,10 @@ export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
     try {
       const formData = new FormData();
       formData.append("file", file);
-        formData.append("directoryId", directoryId);
-        if (userId) {
+      formData.append("directoryId", directoryId);
+      if (userId) {
         formData.append("userId", userId);
-      } 
+      }
 
       const response = await fetch("/api/file/upload", {
         method: "POST",
@@ -47,7 +47,7 @@ export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
 
       if (!response.ok) {
         setError(result.error || "Failed to upload file.");
-        
+
       }
 
       setSuccess(true);
@@ -60,26 +60,41 @@ export default function FileUpload({ directoryId ,userId }: FileUploadProps) {
   };
 
   return (
-    <div className="p-4 bg-gray-700 rounded-lg mt-4 shadow-md">
-      <h2 className="text-lg font-semibold mb-4">Upload File</h2>
+    <div className="p-6 rounded-lg shadow-md">
+      {/* Glowing Effect */}
+
+      {/* Heading */}
+      <h2 className="text-xl font-bold mb-5 text-white">Upload File</h2>
 
       {/* File Input */}
-      <input type="file" onChange={handleFileChange} className="mb-4" />
+      <div className="mb-4">
+
+        <input
+          id="fileInput"
+          type="file"
+          onChange={handleFileChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+        />
+      </div>
 
       {/* Upload Button */}
       <button
         onClick={handleUpload}
         disabled={uploading}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+        className="w-full hover:shadow-blue-200 shadow-blue-400 px-4 py-4 text-md font-medium text-white transition-all duration-300 bg-gray-900/20 border border-gray-500/30 rounded-lg shadow-md backdrop-blur-sm hover:scale-102 hover:bg-gray-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:bg-gray-400"
       >
         {uploading ? "Uploading..." : "Upload"}
       </button>
 
       {/* Success or Error Message */}
       {success && (
-        <p className="mt-2 text-green-500">File uploaded successfully!</p>
+        <p className="mt-4 text-sm text-green-600 font-medium">
+          File uploaded successfully!
+        </p>
       )}
-      {error && <p className="mt-2 text-red-500">{error}</p>}
+      {error && (
+        <p className="mt-4 text-sm text-red-600 font-medium">{error}</p>
+      )}
     </div>
   );
 }
